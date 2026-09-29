@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+//npx prisma migrate dev --name <migration_name>
+// npx prisma generate
+
+model Users {
+  users_id      Int               @id @default(autoincrement())
+  user_name     String
+  email         String            @unique
+  phone_number  String?
+  gender        String?
+  image         String?
+  dept          String?           // Department
+  batch         String?           // Batch/Year
+  student_id    String?           // Student/User ID
+
+
+  bloodRequests BloodRequest[]
+  donorRecords  DonorRecord?
+  lostItems     LostItem[]
+  roommateAds   RoommateListing[] 
+
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+}
+
+model RoommateListing {
+  id                Int      @id @default(autoincrement())
+  area              String
+  fullAddress       String
+  floor             String
+  currentStudents   Int
+  studentsInfo      Json     // Stores array of objects like [{studentId, batch}]
+  rent              Int
+  facilities        String?
+  phone_number      String
+  isGirlsOnly       Boolean  @default(false)
+  whatsappAvailable Boolean  @default(false)
+  
+  postedDate        DateTime @default(now())
+
+  // Relation to User
+  postedBy          Int
+  user              Users    @relation(fields: [postedBy], references: [users_id])
+}
+
+
+model LostItem {
+  item_id           Int      @id @default(autoincrement())
+  name              String
+  description       String   @db.Text
+  date              DateTime
+  location          String
+  phone_number      String?  
+  image             String?  @db.Text
+  whatsappAvailable Boolean  @default(false)
+  
+  owner             Users    @relation(fields: [ownerId], references: [users_id])
+  ownerId           Int
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("lost_items")
+}
+model BloodRequest {
+  request_id   Int      @id @default(autoincrement())
+  blood_group  String
+  location     String
+  deadline     DateTime // The required date/time for the blood
+
+  // Relationship to the user who made the request
+  requester    Users    @relation(fields: [requesterId], references: [users_id])
+  requesterId  Int
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+}
+
+// 3. DonorRecord Model: Stores specific donor information.
+// The presence of a DonorRecord linked to a User record confirms donor status.
+model DonorRecord {
+  donor_id     Int      @id @default(autoincrement())
+  blood_group  String
+  location     String   // Donor's current or preferred donation location
+  last_donated DateTime? 
+
+  // Relationship to the user who is the donor (one-to-one enforced by @unique)
+  user         Users    @relation(fields: [userId], references: [users_id])
+  userId       Int      @unique // Ensures one user can only have one donor profile
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  isActive     Boolean  @default(true)
+}

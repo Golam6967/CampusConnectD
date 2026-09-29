@@ -1,0 +1,37 @@
+@import "tailwindcss";
+:root {
+    --primary: #7a0019;
+    --primary-dark: #5e0013;
+    --background: #f6f7f9;
+    --card-bg: #ffffff;
+    --border: #e0e0e0;
+    --text-dark: #222;
+    --text-muted: #666;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+.page {
+    max-width: 1100px;
+    margin: auto;
+    padding: 24px;
+}
+
+h1, h2, h3 {
+    color: var(--primary);
+    margin-bottom: 12px;
+}
+
+p {
+    color: var(--text-muted);
+}

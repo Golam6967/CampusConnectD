@@ -1,0 +1,9 @@
+/.claude/
+/.idea/
+node_modules/
+
+__pycache__/
+*.pyc
+
+# Test coverage output
+coverage/

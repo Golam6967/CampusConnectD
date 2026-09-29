@@ -1,0 +1,38 @@
+# Render Blueprint: New > Blueprint > select this repo.
+# Databases are external managed services (MongoDB Atlas + Supabase Postgres); their URLs go in env vars.
+services:
+  - type: web
+    name: campusconnect-api
+    runtime: docker
+    rootDir: Backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GMAIL_USER
+        sync: false
+      - key: GMAIL_APP_PASSWORD
+        sync: false
+      - key: FIREBASE_SERVICE_ACCOUNT_JSON
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+
+  - type: web
+    name: campusconnect-chatbot
+    runtime: docker
+    rootDir: chatbot
+    dockerfilePath: ./Dockerfile
+    plan: starter # sentence-transformers + torch do not fit in the free 512MB tier
+    healthCheckPath: /
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
